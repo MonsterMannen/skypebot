@@ -11,6 +11,6 @@ tryhard readme.
 
 ## Installation
 ```
->git clone https://github.com/MonsterMannen/skypebot.git
->python skypeBot.py
+git clone https://github.com/MonsterMannen/skypebot.git
+python skypeBot.py
 ```
