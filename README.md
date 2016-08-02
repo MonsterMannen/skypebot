@@ -10,7 +10,7 @@ tryhard readme.
 
 
 ## Installation
-Clone or download the repository as zip
 ```
+git clone https://github.com/MonsterMannen/skypebot.git
 python skypeBot.py
 ```
