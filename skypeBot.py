@@ -2,6 +2,7 @@ import Skype4Py
 import time
 import sys
 import random
+import requests
 
 
 class SkypeBot(object):
@@ -42,12 +43,36 @@ class SkypeBot(object):
         message.Chat.SendMessage("/me " + answer)
 
     def commandIMDB(self, message):
-        movie = message.Body[6:]
-        message.Chat.SendMessage("test: " + movie)
-        # http://www.omdbapi.com/?t=mad+max+fury+road&y=&plot=short&r=json
-
+        movieTitle = message.Body[6:]
+        url = "http://www.omdbapi.com/?t=" + movieTitle + "&y=&plot=short&r=json"
+        r = requests.get(url)
+        json = r.json()
+        if json["Response"] == "True":
+            imdbID = json["imdbID"]
+            if imdbID not in self.imdbIDs:
+                title = json["Title"]
+                year = json["Year"]
+                rating = json["imdbRating"]
+                self.imdbIDs.append(imdbID)
+                #year = year.encode('ascii', 'ignore')
+                msg = title + "\n" + year + "\n" + rating
+                decoded_string = msg.decode('string_escape')
+                message.Chat.SendMessage(msg)
+            else:
+                print "old id"
+        else:
+            print "response false"
+        
     def commandYouTube(self, message):
         message.Chat.SendMessage("/me under construction")
+
+    def commandClear(self, message):
+        message.Chat.ClearRecentMessages()
+        print "commandClear"
+
+    def commandAidi(self, message):
+        for i in range(69):
+            message.Chat.SendMessage("aidi homo")
         
 
     commands = {
@@ -57,8 +82,13 @@ class SkypeBot(object):
         '!genji': commandGenji,
         '!doit': commandDoIt,
         '!imdb': commandIMDB,
-        '!youtube': commandYouTube
+        '!youtube': commandYouTube,
+        '!clear': commandClear,
+        '!aidi': commandAidi
     }
+
+    # Cache all imdb results
+    imdbIDs = []
 
 
 
@@ -68,4 +98,3 @@ if __name__ == "__main__":
 
     while True:
         time.sleep(1.0)
-        
