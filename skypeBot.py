@@ -49,19 +49,23 @@ class SkypeBot(object):
         json = r.json()
         if json["Response"] == "True":
             imdbID = json["imdbID"]
+            # Can only request info on a movie once to stop spammers
             if imdbID not in self.imdbIDs:
                 title = json["Title"]
                 year = json["Year"]
                 rating = json["imdbRating"]
                 self.imdbIDs.append(imdbID)
-                #year = year.encode('ascii', 'ignore')
+                # ghetto fix ascii character problem when printing
+                if len(year) == 9:
+                    year = year[:4] + "-" + year[5:]
+                elif len(year) == 5:
+                    year = year[:4] + "-"
                 msg = title + "\n" + year + "\n" + rating
                 decoded_string = msg.decode('string_escape')
                 message.Chat.SendMessage(msg)
-            else:
-                print "old id"
         else:
             print "response false"
+            message.Chat.SendMessage(json["Error"])
         
     def commandYouTube(self, message):
         message.Chat.SendMessage("/me under construction")
